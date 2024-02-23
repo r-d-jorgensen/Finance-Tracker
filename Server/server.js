@@ -13,4 +13,9 @@ app.get('/', (req, res) => {
     res.send("Finance Tracker Application.");
 });
 
+app.post('/login', (req, res) => {
+    console.log(req.body);
+    res.send("Token");
+});
+
 app.listen(port, () => console.log(`Server is listening on port http://localhost:${port}/.`));
