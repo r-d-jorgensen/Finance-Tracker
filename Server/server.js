@@ -16,7 +16,7 @@ app.get('/', (req, res) => {
 
 app.post('/login', async (req, res) => {
     console.log(req.body);
-    const sql = `SELECT * FROM account_book WHERE book_name = ${req.body.username} AND book_password = ${req.body.password}`;
+    const sql = `SELECT * FROM account_book WHERE book_name = '${req.body.username}' AND book_password = '${req.body.password}'`;
     const [rows] = await connection.promise().query(sql);
     console.log(rows);
     res.send("Token");
