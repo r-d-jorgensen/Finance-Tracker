@@ -1,25 +1,19 @@
 require('dotenv').config()
 const express = require('express');
-const bodyParser = require('body-parser');
-const cors = require('cors');
-const connection = require('./utilities/connection');
-
 const app = express();
+const cors = require('cors');
 
-app.use(cors());
-app.use(bodyParser.urlencoded({ extended: false }));
+const jwt = require('./_utilities/jwt');
+const errorHandler = require('./_utilities/error-handler');
+
+app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
+app.use(cors());
+app.use(jwt());
 
-app.get('/', (req, res) => {
-    res.send("Finance Tracker Application.");
-});
+// api routes
+app.use('/users', require('./users/users.controller'));
 
-app.post('/login', async (req, res) => {
-    console.log(req.body);
-    const sql = `SELECT * FROM account_book WHERE book_name = '${req.body.username}' AND book_password = '${req.body.password}'`;
-    const [rows] = await connection.promise().query(sql);
-    console.log(rows);
-    res.send("Token");
-});
+//app.use(errorHandler);
 
 app.listen(process.env.PORT, () => console.log(`Server is listening on port http://localhost:${process.env.PORT}/.`));
