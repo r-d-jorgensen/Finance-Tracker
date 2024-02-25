@@ -2,12 +2,20 @@ DROP DATABASE IF EXISTS FinanceDB;
 CREATE DATABASE FinanceDB;
 USE FinanceDB;
 
+CREATE TABLE users (
+	user_id int NOT NULL AUTO_INCREMENT,
+	username varchar(225) NOT NULL UNIQUE,
+    password varchar(225) NOT NULL,
+    email varchar(225) NOT NULL UNIQUE,
+    PRIMARY KEY (user_id)
+);
+
 CREATE TABLE account_book (
 	book_id int NOT NULL AUTO_INCREMENT,
+    user_id int NOT NULL,
 	book_name varchar(225) NOT NULL,
-    book_password varchar(225) NOT NULL,
-    email varchar(225) NOT NULL,
-    PRIMARY KEY (book_id)
+    PRIMARY KEY (book_id),
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
 
 CREATE TABLE catagory_type_ENUM (
