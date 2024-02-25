@@ -14,6 +14,6 @@ app.use(jwt());
 // api routes
 app.use('/users', require('./users/users.controller'));
 
-//app.use(errorHandler);
+app.use(errorHandler);
 
 app.listen(process.env.PORT, () => console.log(`Server is listening on port http://localhost:${process.env.PORT}/.`));
