@@ -1,6 +1,6 @@
-const { expressjwt } = require('express-jwt');
+import { expressjwt } from 'express-jwt';
 
-module.exports = jwt;
+export default jwt;
 
 function jwt() {
     const secret = process.env.TOKEN_SECRET;

@@ -1,14 +1,14 @@
-const express = require('express');
+import express from 'express';
+import userService from './user.service.js';
 const router = express.Router();
-const userService = require('./user.service');
 
 // routes
 router.post('/authenticate', authenticate);
 
-module.exports = router;
+export default router;
 
 function authenticate(req, res, next) {
-    userService.authenticate(req.body)
+    userService.authenticateUser(req.body)
         .then(user => res.json(user))
         .catch(next);
 }

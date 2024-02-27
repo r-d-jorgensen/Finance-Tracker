@@ -1,16 +1,22 @@
-const jwt = require('jsonwebtoken');
-const connection = require('../_utilities/connection');
+import jwt from 'jsonwebtoken';
+import { object, string } from 'yup';
+import connection from '../_utilities/connection.js';
 
-module.exports = {
-    authenticate
+export default {
+    authenticateUser
 };
 
-async function authenticate({ username, password }) {
-    // TODO: check for bad characters and injection 
-    const sql = `SELECT * FROM users WHERE username = '${username}' AND password = '${password}'`;
+// TODO: currently only alphaNum.. should allow special chars for password security
+let userSchema = object({
+    username: string().matches('^[a-zA-Z0-9]').min(5).required(),
+    password: string().matches('^[a-zA-Z0-9]').min(3).required()
+});
+
+async function authenticateUser(userAuth) {
+    const user = await userSchema.validate(userAuth);
+    const sql = `SELECT * FROM users WHERE username = '${user.username}' AND password = '${user.password}'`;
     const [rows] = await connection.promise().query(sql);
 
-    // TODO Needs better error checking
     if (rows.length === 0) throw 'Username or password is incorrect';
 
     // create a jwt token that is valid for 7 days
