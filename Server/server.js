@@ -3,7 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import jwt from './_utilities/jwt.js';
 import errorHandler from './_utilities/error-handler.js';
-import router from './users/users.controller.js';
+import users from './users/users.controller.js';
 
 const app = express();
 app.use(express.urlencoded({ extended: false }));
@@ -12,7 +12,7 @@ app.use(cors());
 app.use(jwt());
 
 // api routes
-app.use('/users', router);
+app.use('/users', users);
 
 app.use(errorHandler);
 

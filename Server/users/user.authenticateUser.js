@@ -1,16 +1,8 @@
 import jwt from 'jsonwebtoken';
-import { object, string } from 'yup';
+import { userSchema } from './user.dataSchemas.js';
 import connectionPool from '../_utilities/connection.js';
 
-export default {
-    authenticateUser
-};
-
-// TODO: currently only alphaNum.. should allow special chars for password security
-let userSchema = object({
-    username: string().matches('^[a-zA-Z0-9]').min(5).required(),
-    password: string().matches('^[a-zA-Z0-9]').min(3).required()
-});
+export default authenticateUser;
 
 async function authenticateUser(userAuth) {
     userAuth = await userSchema.validate(userAuth);
