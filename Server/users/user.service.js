@@ -20,16 +20,10 @@ async function authenticateUser(userAuth) {
     const user = (await connectionPool.execute(sql, [userAuth.username, userAuth.password]))[0][0];
     if (!user) throw 'Username or password is incorrect';
 
-    // create a jwt token that is valid for 7 days
-    const token = jwt.sign({ sub: 0 }, process.env.TOKEN_SECRET, { expiresIn: '7d' });
+    // return user data with a jwt token that is valid for 7 days
     return {
-        ...omitPassword(user),
-        token
+        user_id: user.user_id,
+        username: user.username,
+        token: jwt.sign({ sub: 0 }, process.env.TOKEN_SECRET, { expiresIn: '7d' })
     };
-}
-
-// helper functions
-function omitPassword(user) {
-    const { password, ...userWithoutPassword } = user;
-    return userWithoutPassword;
 }
