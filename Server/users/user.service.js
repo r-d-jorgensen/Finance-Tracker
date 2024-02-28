@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import { object, string } from 'yup';
-import connection from '../_utilities/connection.js';
+import connectionPool from '../_utilities/connection.js';
 
 export default {
     authenticateUser
@@ -13,16 +13,17 @@ let userSchema = object({
 });
 
 async function authenticateUser(userAuth) {
-    const user = await userSchema.validate(userAuth);
-    const sql = `SELECT * FROM users WHERE username = '${user.username}' AND password = '${user.password}'`;
-    const [rows] = await connection.promise().query(sql);
+    userAuth = await userSchema.validate(userAuth);
 
-    if (rows.length === 0) throw 'Username or password is incorrect';
+    // User is undefined if no matches in DB
+    const sql = `SELECT * FROM users WHERE username = ? AND password = ?`;
+    const user = (await connectionPool.execute(sql, [userAuth.username, userAuth.password]))[0][0];
+    if (!user) throw 'Username or password is incorrect';
 
     // create a jwt token that is valid for 7 days
     const token = jwt.sign({ sub: 0 }, process.env.TOKEN_SECRET, { expiresIn: '7d' });
     return {
-        ...omitPassword(rows[0]),
+        ...omitPassword(user),
         token
     };
 }
