@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import { userSchema } from './user.dataSchemas.js';
 import connectionPool from '../_utilities/connection.js';
+import APIError from '../_utilities/apiError.js';
 
 export default authenticateUser;
 
@@ -10,7 +11,7 @@ async function authenticateUser(userAuth) {
     // User is undefined if no matches in DB
     const sql = `SELECT * FROM users WHERE username = ? AND password = ?`;
     const user = (await connectionPool.execute(sql, [userAuth.username, userAuth.password]))[0][0];
-    if (!user) throw 'Username or password is incorrect';
+    if (!user) throw new APIError('Bad Auth', 401, 'Username or password is incorrect');
 
     // return user data with a jwt token that is valid for 7 days
     return {
