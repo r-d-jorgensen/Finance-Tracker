@@ -1,16 +1,12 @@
 import express from 'express';
-import authenticateUser from './user.authenticateUser.js';
-import createUser from './user.createUser.js';
+import createUserControler from './user.create.js';
+import deleteUserControler from './user.delete.js';
+import loginUserControler from './user.login.js';
 const router = express.Router();
 
-// routes
-router.post('/authenticate', authenticate);
-router.post('/addUser', createUser);
+// User routes
+router.post('/createUser', createUserControler);
+router.post('/deleteUser', deleteUserControler);
+router.post('/loginUser', loginUserControler);
 
 export default router;
-
-function authenticate(req, res, next) {
-    authenticateUser(req.body)
-        .then(user => res.json(user))
-        .catch(next);
-}

@@ -3,14 +3,20 @@ import { object, string } from 'yup';
 import connectionPool from '../_utilities/connection.js';
 import APIError from '../_utilities/apiError.js';
 
-export default authenticateUser;
+export default loginUserControler;
+
+function loginUserControler(req, res, next) {
+    loginUser(req.body)
+        .then(user => res.json(user))
+        .catch(next);
+}
 
 let userSchema = object({
     username: string().matches(/^[a-zA-Z0-9!@#$%^&*?]+$/).min(5).required(),
     password: string().matches(/^[a-zA-Z0-9!@#$%^&*?]+$/).min(3).required()
 });
 
-async function authenticateUser(userAuth) {
+async function loginUser(userAuth) {
     userAuth = await userSchema.validate(userAuth);
 
     // User is undefined if no matches in DB
