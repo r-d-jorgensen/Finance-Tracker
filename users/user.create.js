@@ -1,4 +1,5 @@
 import jwt from 'jsonwebtoken';
+import { hash } from 'bcrypt';
 import { object, string } from 'yup';
 import connectionPool from '../_utilities/connection.js';
 import APIError from '../_utilities/apiError.js';
@@ -20,8 +21,10 @@ let userSchema = object({
 async function createUser(newUser) {
     newUser = await userSchema.validate(newUser);
 
+    // TODO - password should be sent in encrypted from server side then decrypted and hashed here for storage
+    const hashedPassword = await hash(newUser.password, Number(process.env.SALT_ROUNDS));
     const sql = `INSERT INTO users (username, password, email) VALUES (?, ?, ?)`;
-    const user = (await connectionPool.execute(sql, [newUser.username, newUser.password, newUser.email]))[0];
+    const user = (await connectionPool.execute(sql, [newUser.username, hashedPassword, newUser.email]))[0];
     if (!user) throw new APIError('Database connection Error', 500, 'Unable to get response from Database');
 
     // return user data with a jwt token that is valid for 7 days

@@ -1,4 +1,5 @@
 import jwt from 'jsonwebtoken';
+import { compare } from 'bcrypt';
 import { object, string } from 'yup';
 import connectionPool from '../_utilities/connection.js';
 import APIError from '../_utilities/apiError.js';
@@ -19,10 +20,13 @@ let userSchema = object({
 async function loginUser(userAuth) {
     userAuth = await userSchema.validate(userAuth);
 
-    // User is undefined if no matches in DB
-    const sql = `SELECT * FROM users WHERE username = ? AND password = ?`;
-    const user = (await connectionPool.execute(sql, [userAuth.username, userAuth.password]))[0][0];
-    if (!user) throw new APIError('Bad Auth', 401, 'Username or password is incorrect');
+    // All usernames should be unique so only the first value matters
+    const sql = `SELECT * FROM users WHERE username = ?`;
+    const user = (await connectionPool.execute(sql, [userAuth.username]))[0][0];
+    if (!user) throw new APIError('Database connection Error', 500, 'Unable to get response from Database');
+
+    // TODO - password should be sent in encrypted from server side then decrypted here for comparison
+    if (!(await compare(userAuth.password, user.password))) throw new APIError('Bad Auth', 401, 'Username or password is incorrect');
 
     // return user data with a jwt token that is valid for 7 days
     return {
