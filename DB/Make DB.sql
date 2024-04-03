@@ -7,6 +7,7 @@ CREATE TABLE users (
 	username varchar(225) NOT NULL UNIQUE,
     password varchar(225) NOT NULL,
     email varchar(225) NOT NULL,
+    isVerified bool NOT NULL,
     PRIMARY KEY (user_id)
 );
 
