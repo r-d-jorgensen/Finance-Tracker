@@ -5,13 +5,7 @@ import nodemailer from 'nodemailer';
 import connectionPool from '../_utilities/connection.js';
 import APIError from '../_utilities/apiError.js';
 
-export default createUserControler;
-
-function createUserControler(req, res, next) {
-    createUser(req.body)
-        .then(user => res.json(user))
-        .catch(next);
-}
+export default createUser;
 
 let userSchema = object({
     username: string().matches(/^[a-zA-Z0-9!@#$%^&*?]+$/).min(5).required(),

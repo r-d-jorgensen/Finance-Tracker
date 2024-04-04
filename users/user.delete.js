@@ -2,13 +2,7 @@ import { object, string } from 'yup';
 import connectionPool from '../_utilities/connection.js';
 import APIError from '../_utilities/apiError.js';
 
-export default deleteUserControler;
-
-function deleteUserControler(req, res, next) {
-    deleteUser(req.body)
-        .then(user => res.json(user))
-        .catch(next);
-}
+export default deleteUser;
 
 let userSchema = object({
     username: string().matches(/^[a-zA-Z0-9!@#$%^&*?]+$/).min(5).required(),
