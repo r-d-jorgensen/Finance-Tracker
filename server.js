@@ -3,7 +3,8 @@ import express from 'express';
 import cors from 'cors';
 import tokenAuthenticater from './_utilities/tokenAuthenticater.js';
 import errorHandler from './_utilities/error-handler.js';
-import users from './users/users.controller.js';
+import users from './user/user.controller.js';
+import record from './record/record.controller.js';
 
 const app = express();
 app.use(express.urlencoded({ extended: false }));
@@ -12,7 +13,8 @@ app.use(cors());
 app.use(tokenAuthenticater());
 
 // api routes
-app.use('/users', users);
+app.use('/user', users);
+app.use('/record', record);
 
 app.use(errorHandler);
 
