@@ -5,8 +5,7 @@ import APIError from '../_utilities/apiError.js';
 export default createRecord;
 
 let recordSchema = object({
-    user_id: Number().required,
-    username: string().matches(/^[a-zA-Z0-9!@#$%^&*?]+$/).min(5).required(),
+    
 });
 
 async function createRecord(newRecord) {
