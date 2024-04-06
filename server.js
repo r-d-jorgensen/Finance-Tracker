@@ -4,6 +4,7 @@ import cors from 'cors';
 import tokenAuthenticater from './_utilities/tokenAuthenticater.js';
 import errorHandler from './_utilities/error-handler.js';
 import users from './user/user.controller.js';
+import accountBook from './accountBook/accountBook.controller.js';
 import record from './record/record.controller.js';
 
 const app = express();
@@ -14,6 +15,7 @@ app.use(tokenAuthenticater());
 
 // api routes
 app.use('/user', users);
+app.use('/accountBook', accountBook);
 app.use('/record', record);
 
 app.use(errorHandler);
