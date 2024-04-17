@@ -3,7 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import tokenAuthenticater from './_utilities/tokenAuthenticater.js';
 import errorHandler from './_utilities/error-handler.js';
-import users from './user/user.controller.js';
+import user from './user/user.controller.js';
 import accountBook from './accountBook/accountBook.controller.js';
 import record from './record/record.controller.js';
 
@@ -14,10 +14,12 @@ app.use(cors());
 app.use(tokenAuthenticater());
 
 // api routes
-app.use('/user', users);
+app.use('/user', user);
 app.use('/accountBook', accountBook);
 app.use('/record', record);
 
 app.use(errorHandler);
 
 app.listen(process.env.PORT, () => console.log(`Server is listening on port http://localhost:${process.env.PORT}/.`));
+
+export default app;
