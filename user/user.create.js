@@ -52,6 +52,8 @@ async function createUser(newUser) {
 
     // return user data with a jwt token that is valid for 7 days
     return {
+        success: true,
+        message: 'registration success',
         user_id: user.insertId,
         username: newUser.username,
         token: jwt.sign({ sub: 0 }, process.env.TOKEN_SECRET, { expiresIn: '7d' })
