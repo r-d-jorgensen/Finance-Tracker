@@ -9,7 +9,7 @@ export default createUser;
 
 let userSchema = object({
     username: string().matches(/^[a-zA-Z0-9!@#$%^&*?]+$/).min(5).required(),
-    password: string().matches(/^[a-zA-Z0-9!@#$%^&*?]+$/).min(3).required(),
+    password: string().matches(/^[a-zA-Z0-9!@#$%^&*?]+$/).min(5).required(),
     email: string().email().required()
 });
 
@@ -18,8 +18,8 @@ async function createUser(newUser) {
 
     // TODO - password should be sent in encrypted from server side then decrypted and hashed here for storage
     const hashedPassword = await hash(newUser.password, Number(process.env.SALT_ROUNDS));
-    const sql = `INSERT INTO users (username, password, email, isVerified) VALUES (?, ?, ?, 0)`;
-    const user = (await connectionPool.execute(sql, [newUser.username, hashedPassword, newUser.email]))[0];
+    const sqlquery = `INSERT INTO users (username, password, email, isVerified) VALUES (?, ?, ?, 0)`;
+    const user = (await connectionPool.execute(sqlquery, [newUser.username, hashedPassword, newUser.email]))[0];
     if (!user) throw new APIError('Database connection Error', 500, 'Unable to get response from Database');
 
     // generate and send email for verification
@@ -52,7 +52,6 @@ async function createUser(newUser) {
 
     // return user data with a jwt token that is valid for 7 days
     return {
-        success: true,
         message: 'registration success',
         user_id: user.insertId,
         username: newUser.username,

@@ -15,8 +15,8 @@ async function loginUser(userAuth) {
     userAuth = await userSchema.validate(userAuth);
 
     // All usernames should be unique so only the first value matters
-    const sql = `SELECT * FROM users WHERE username = ?`;
-    const user = (await connectionPool.execute(sql, [userAuth.username]))[0][0];
+    const sqlquery = `SELECT * FROM users WHERE username = ?`;
+    const user = (await connectionPool.execute(sqlquery, [userAuth.username]))[0][0];
     if (!user) throw new APIError('Database connection Error', 500, 'Unable to get response from Database');
 
     // TODO - password should be sent in encrypted from server side then decrypted here for comparison

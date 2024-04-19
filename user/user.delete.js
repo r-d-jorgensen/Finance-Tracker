@@ -13,8 +13,8 @@ async function deleteUser(newUser) {
     newUser = await userSchema.validate(newUser);
 
     // TODO - This needs to cascade across all data that has user ID and use a trasaction
-    const sql = ` DELETE FROM users WHERE username = ? AND password = ?`;
-    const user = (await connectionPool.execute(sql, [newUser.username, newUser.password]))[0];
+    const sqlquery = ` DELETE FROM users WHERE username = ? AND password = ?`;
+    const user = (await connectionPool.execute(sqlquery, [newUser.username, newUser.password]))[0];
     if (user.affectedRows == 0) throw new APIError('Reject Data', 400, 'Failed to find user');
 
     return {
