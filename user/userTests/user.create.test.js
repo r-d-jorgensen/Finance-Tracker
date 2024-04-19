@@ -44,7 +44,7 @@ describe('Create New User - /user/createUser', () => {
         expect(await userExistsInDB(testUser.username, testUser.password)).toEqual(true);
     });
 
-    it('should return error of not enough characters', async () => {
+    it('should return error of not enough characters for username', async () => {
         testUser.username = "fs";
         const res = await supertest(app)
             .post('/user/createUser')
@@ -64,7 +64,27 @@ describe('Create New User - /user/createUser', () => {
         expect(await userExistsInDB(testUser.username, testUser.password)).toEqual(false);
     });
 
-    it('should return error of not enough characters', async () => {
+    it('should return error of bad characters for username', async () => {
+        testUser.username = "fs|=";
+        const res = await supertest(app)
+            .post('/user/createUser')
+            .set('Accept', 'application/json')
+            .send(testUser);
+
+        expect(res.statusCode).toEqual(400);
+        expect(res.headers['content-type']).toContain('application/json');
+        expect(res.body).toEqual(
+            expect.objectContaining({
+                name: 'ValidationError',
+                message: 'Data did not match allowed structure',
+                inValidEntries: [ "username must match the following: \"/^[a-zA-Z0-9!@#$%^&*?]+$/\"" ]
+            }),
+        );
+
+        expect(await userExistsInDB(testUser.username, testUser.password)).toEqual(false);
+    });
+
+    it('should return error of not enough characters for password', async () => {
         testUser.password = "fs";
         const res = await supertest(app)
             .post('/user/createUser')
@@ -78,6 +98,46 @@ describe('Create New User - /user/createUser', () => {
                 name: 'ValidationError',
                 message: 'Data did not match allowed structure',
                 inValidEntries: [ 'password must be at least 5 characters' ]
+            }),
+        );
+
+        expect(await userExistsInDB(testUser.username, testUser.password)).toEqual(false);
+    });
+
+    it('should return error of bad characters for password', async () => {
+        testUser.password = "fs|=";
+        const res = await supertest(app)
+            .post('/user/createUser')
+            .set('Accept', 'application/json')
+            .send(testUser);
+
+        expect(res.statusCode).toEqual(400);
+        expect(res.headers['content-type']).toContain('application/json');
+        expect(res.body).toEqual(
+            expect.objectContaining({
+                name: 'ValidationError',
+                message: 'Data did not match allowed structure',
+                inValidEntries: [ "password must match the following: \"/^[a-zA-Z0-9!@#$%^&*?]+$/\"" ]
+            }),
+        );
+
+        expect(await userExistsInDB(testUser.username, testUser.password)).toEqual(false);
+    });
+
+    it('should return error of not evalid email', async () => {
+        testUser.email = "fdsafa";
+        const res = await supertest(app)
+            .post('/user/createUser')
+            .set('Accept', 'application/json')
+            .send(testUser);
+
+        expect(res.statusCode).toEqual(400);
+        expect(res.headers['content-type']).toContain('application/json');
+        expect(res.body).toEqual(
+            expect.objectContaining({
+                name: 'ValidationError',
+                message: 'Data did not match allowed structure',
+                inValidEntries: [ 'email must be a valid email' ]
             }),
         );
 
