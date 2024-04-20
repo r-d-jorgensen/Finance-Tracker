@@ -20,6 +20,4 @@ app.use('/record', record);
 
 app.use(errorHandler);
 
-app.listen(process.env.PORT, () => console.log(`Server is listening on port http://localhost:${process.env.PORT}/.`));
-
 export default app;
