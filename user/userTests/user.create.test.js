@@ -124,7 +124,7 @@ describe('Create New User - /user/createUser', () => {
         expect(await userExistsInDB(testUser.username, testUser.password)).toEqual(false);
     });
 
-    it('should return error of not evalid email', async () => {
+    it('should return error of not valid email', async () => {
         testUser.email = "fdsafa";
         const res = await supertest(app)
             .post('/user/createUser')
