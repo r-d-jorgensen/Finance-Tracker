@@ -16,7 +16,7 @@ describe('Login User - /user/loginUser', () => {
         .send({
             username: testUser.username,
             password: testUser.password,
-            email: "bigstuff@gmail.com",
+            email: "bigstuff" + randomInt(1000000000) + "@gmail.com",
         });
     });
   

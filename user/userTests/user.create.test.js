@@ -16,7 +16,7 @@ describe('Create New User - /user/createUser', () => {
         testUser = {
             username: "TestUser" + randomInt(1000000000),
             password: "testPassword" + randomInt(1000000000),
-            email: "richard.david.jorgensen@gmail.com"
+            email: "bigstuff" + randomInt(1000000000) + "@gmail.com",
         };
     });
   
