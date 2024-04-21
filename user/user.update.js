@@ -7,7 +7,7 @@ export default updateUser;
 let userSchema = object({
     userid: number().required(),
     username: string().matches(/^[a-zA-Z0-9!@#$%^&*?]+$/).min(5).required(),
-    password: string().matches(/^[a-zA-Z0-9!@#$%^&*?]+$/).min(3).required(),
+    password: string().matches(/^[a-zA-Z0-9!@#$%^&*?]+$/).min(5).required(),
     email: string().email().required()
 });
 
