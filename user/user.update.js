@@ -13,8 +13,9 @@ let userSchema = object({
 
 async function updateUser(user) {
     user = await userSchema.validate(user);
+    console.log(user)
     const sqlquery = `UPDATE users SET password = ?, email = ? WHERE user_id = ? AND username = ?`;
-    const dbResponse = (await connectionPool.execute(sqlquery, [user.password, user.email, user.userid, user.username]))[0];
+    const dbResponse = (await connectionPool.execute(sqlquery, [user.password, user.email, user.user_id, user.username]))[0];
     if (dbResponse.affectedRows === 0) throw new APIError('Bad Data', 400, 'Data same as Database');
 
     return {
