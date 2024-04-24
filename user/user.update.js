@@ -5,7 +5,7 @@ import APIError from '../_utilities/apiError.js';
 export default updateUser;
 
 let userSchema = object({
-    user_id: number().positive("Must be a positive value").min(1).required(),
+    user_id: number().min(1).required(),
     username: string().matches(/^[a-zA-Z0-9!@#$%^&*?]+$/).min(5).required(),
     password: string().matches(/^[a-zA-Z0-9!@#$%^&*?]+$/).min(5).required(),
     email: string().email().required()
