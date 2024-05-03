@@ -4,20 +4,31 @@ import connectionPool from '../../_utilities/connection.js';
 import app from "../../server.js";
 
 describe('Login User - /user/loginUser', () => {
-    const testUser = {
+    const baseUser = {
         username: "TestUser" + randomInt(1000000000),
         password: "testPassword" + randomInt(1000000000),
-    };
+        email: "bigstuff" + randomInt(1000000000) + "@gmail.com",
+    }
+    const testUser = {...baseUser};
 
     beforeAll(async () => {
-        await supertest(app)
+        const res = await supertest(app)
         .post('/user/createUser')
         .set('Accept', 'application/json')
-        .send({
-            username: testUser.username,
-            password: testUser.password,
-            email: "bigstuff" + randomInt(1000000000) + "@gmail.com",
-        });
+        .send(baseUser)
+        .expect(200);
+
+        baseUser.token = "Bearer " + res.body.token;
+        baseUser.user_id = res.body.user_id;
+    });
+
+    afterAll(async () => {
+        const res = await supertest(app)
+            .post('/user/deleteUser')
+            .set('Accept', 'application/json')
+            .set('Authorization', baseUser.token)
+            .send(baseUser)
+            .expect(200);
     });
   
     it('should return new user id and auth token', async () => {

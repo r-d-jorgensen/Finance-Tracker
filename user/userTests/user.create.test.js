@@ -42,6 +42,15 @@ describe('Create New User - /user/createUser', () => {
         expect(user.length).toEqual(1);
         expect(user[0].username).toEqual(testUser.username);
         expect(await userExistsInDB(testUser.username, testUser.password)).toEqual(true);
+
+        // clean up
+        testUser.user_id = res.body.user_id;
+        await supertest(app)
+            .post('/user/deleteUser')
+            .set('Accept', 'application/json')
+            .set('Authorization', "Bearer " + res.body.token)
+            .send(testUser)
+            .expect(200);
     });
 
     it('should return error of not enough characters for username', async () => {
