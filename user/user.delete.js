@@ -15,7 +15,7 @@ async function deleteUser(user) {
 
     // TODO - This needs to cascade across all data that has user ID and use a trasaction
     const sqlquery = `DELETE FROM users WHERE user_id = ? AND username = ?`;
-    const dbResponse = (await connectionPool.execute(sqlquery, [user.user_id, user.username, user.password]));
+    const dbResponse = (await connectionPool.execute(sqlquery, [user.user_id, user.username]));
     if (dbResponse.affectedRows == 0) throw new APIError('Reject Data', 400, 'Failed to find user');
 
     return {
