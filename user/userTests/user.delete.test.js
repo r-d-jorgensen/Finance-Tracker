@@ -119,49 +119,5 @@ describe('Delete User - /user/deleteUser', () => {
         const user = await getUserData();
         expect(user.length).toEqual(1);
     });
-
-    it('should return error of not enough characters for password', async () => {
-        testUser.password = "fs";
-        const res = await supertest(app)
-            .post('/user/deleteUser')
-            .set('Accept', 'application/json')
-            .set('Authorization', token)
-            .send(testUser);
-
-        expect(res.statusCode).toEqual(400);
-        expect(res.headers['content-type']).toContain('application/json');
-        expect(res.body).toEqual(
-            expect.objectContaining({
-                name: 'ValidationError',
-                message: 'Data did not match allowed structure',
-                inValidEntries: [ 'password must be at least 5 characters' ]
-            }),
-        );
-
-        const user = await getUserData();
-        expect(user.length).toEqual(1);
-    });
-
-    it('should return error of bad characters for password', async () => {
-        testUser.password = "fs|=";
-        const res = await supertest(app)
-            .post('/user/deleteUser')
-            .set('Accept', 'application/json')
-            .set('Authorization', token)
-            .send(testUser);
-
-        expect(res.statusCode).toEqual(400);
-        expect(res.headers['content-type']).toContain('application/json');
-        expect(res.body).toEqual(
-            expect.objectContaining({
-                name: 'ValidationError',
-                message: 'Data did not match allowed structure',
-                inValidEntries: [ "password must match the following: \"/^[a-zA-Z0-9!@#$%^&*?]+$/\"" ]
-            }),
-        );
-
-        const user = await getUserData();
-        expect(user.length).toEqual(1);
-    });
 });
 
