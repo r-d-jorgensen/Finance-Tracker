@@ -1,4 +1,5 @@
 import { randomInt } from "crypto";
+import { compare } from 'bcrypt';
 import supertest from "supertest";
 import connectionPool from '../../_utilities/connection.js';
 import app from "../../server.js";
@@ -42,24 +43,46 @@ describe('Update User - /user/updateUser', () => {
             .expect(200);
     });
   
-    it('should return success message', async () => {
+    it('should return success message for update Email', async () => {
+        baseUser.email = "otherstuff" + randomInt(1000000000) + "@gmail.com";
         const res = await supertest(app)
             .post('/user/updateUser')
             .set('Accept', 'application/json')
             .set('Authorization', token)
-            .send(testUser);
+            .send(baseUser);
 
         expect(res.statusCode).toEqual(200);
         expect(res.headers['content-type']).toContain('application/json');
         expect(res.body).toEqual(
             expect.objectContaining({
-                message: "Password and Email Updated Successfully"
+                message: "Email Updated Successfully"
             }),
         );
 
-        const user = await getUserData(testUser);
-        //expect(user[0].password).toEqual(testUser.password);
-        expect(user[0].email).toEqual(testUser.email);
+        const user = await getUserData(baseUser);
+        expect(await compare(baseUser.password, user[0].password));
+        expect(user[0].email).toEqual(baseUser.email);
+    });
+
+    it('should return success message for update Password', async () => {
+        baseUser.password = "otherPassword" + randomInt(1000000000);
+        const res = await supertest(app)
+            .post('/user/updateUser')
+            .set('Accept', 'application/json')
+            .set('Authorization', token)
+            .send(baseUser);
+
+        expect(res.statusCode).toEqual(200);
+        expect(res.headers['content-type']).toContain('application/json');
+        expect(res.body).toEqual(
+            expect.objectContaining({
+                message: "Password Updated Successfully"
+            }),
+        );
+
+        const user = await getUserData(baseUser);
+        expect(await compare(baseUser.password, user[0].password));
+        expect(user[0].email).toEqual(baseUser.email);
     });
 
     it('should return error of bad user_id', async () => {

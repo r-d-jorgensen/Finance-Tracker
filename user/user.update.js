@@ -1,4 +1,5 @@
 import { object, string, number } from 'yup';
+import { compare, hash } from 'bcrypt';
 import connectionPool from '../_utilities/connection.js';
 import APIError from '../_utilities/apiError.js';
 
@@ -14,12 +15,22 @@ let userSchema = object({
 async function updateUser(user) {
     user = await userSchema.validate(user);
 
-    // TODO - Seperate check to update password
-    const sqlquery = `UPDATE users SET email = ? WHERE user_id = ? AND username = ?`;
-    const dbResponse = (await connectionPool.execute(sqlquery, [user.email, user.user_id, user.username]))[0];
-    if (dbResponse.affectedRows === 0) throw new APIError('Bad Data', 400, 'Data same as Database');
+    let sqlquery = `SELECT * FROM users WHERE user_id = ? AND username = ?`;
+    let dbResponse = (await connectionPool.execute(sqlquery, [user.user_id, user.username]))[0][0];
+    if (!await compare(user.password, dbResponse.password)) {
+        sqlquery = `UPDATE users SET password = ? WHERE user_id = ? AND username = ?`;
+        const hashedPassword = await hash(user.password, Number(process.env.SALT_ROUNDS));
+        dbResponse = (await connectionPool.execute(sqlquery, [hashedPassword, user.user_id, user.username]))[0];
+        return {
+            message: "Password Updated Successfully"
+        };
+    }
+    if (dbResponse.email == user.email)throw new APIError('Bad Data', 400, 'Data same as Database')
 
+    
+    sqlquery = `UPDATE users SET email = ? WHERE user_id = ? AND username = ?`;
+    dbResponse = (await connectionPool.execute(sqlquery, [user.email, user.user_id, user.username]))[0];
     return {
-        message: "Password and Email Updated Successfully"
-    };
+        message: "Email Updated Successfully"
+    }  
 }
